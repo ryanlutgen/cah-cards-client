@@ -6,10 +6,19 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "Ryan Lutgen",
   "license": "ISC",
   "dependencies": {
     "lodash": "^4.17.2",
     "node-xlsx": "^0.7.4"
-  }
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ryanlutgen/cah-cards-client.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ryanlutgen/cah-cards-client/issues"
+  },
+  "homepage": "https://github.com/ryanlutgen/cah-cards-client#readme"
 }
