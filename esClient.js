@@ -10,6 +10,7 @@ const INDEX_NAME = 'cards-against-humanity-cards';
 
 function prepareBulkBody(type, cards) {
     let body = [];
+    let bodies = [];
     // [
     //     // action description
     //     { index:  { _index: 'myindex', _type: 'mytype', _id: 1 } },
@@ -24,12 +25,23 @@ function prepareBulkBody(type, cards) {
     //     // no document needed for this delete
     // ]
 
+    let i = 0;
+
     _.each(cards, (card) => {
         body.push({ index:  { _index: INDEX_NAME, _type: type } });
         body.push(card);
+        i++;
+
+        if (i > 200) {
+            bodies.push(body);
+            body = [];
+            i = 0;
+        }
     });
 
-    return body;
+    bodies.push(body);
+
+    return bodies;
 }
 
 module.exports = {
@@ -46,11 +58,13 @@ module.exports = {
         });
     },
     insertIntoElasticsearch: function(type, cards) {
-        let bulkBody = prepareBulkBody(type, cards);
-        client.bulk({
-            body: bulkBody
-        }, function (err, resp) {
-            console.log(`done bulk indexing ${type}`);
+        let bulkBodies = prepareBulkBody(type, cards);
+        _.each(bulkBodies, (bulkBody) => {
+            client.bulk({
+                body: bulkBody
+            }, function (err, resp) {
+                console.log(`done bulk indexing ${type}`);
+            });
         });
     }
 };

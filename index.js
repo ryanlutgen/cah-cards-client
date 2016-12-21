@@ -59,10 +59,18 @@ _.each(cardsNestedBySet, (cardSet, setName) => {
 });
 
 esclient.initIndex(function() {
+    let throttleCurrent = 0;
+    let throttleIncrement = 1000;
+
     // esclient.insertIntoElasticsearch(util.formatESTypeFromSetName(mainSetCards[0].card_set), mainSetCards);
     _.each(cardsNestedBySet, (cardSet) => {
         if (cardSet.length > 0) {
-            esclient.insertIntoElasticsearch(util.formatESTypeFromSetName(cardSet[0].card_set), cardSet);
+            setTimeout(function() {
+                console.log(`starting throttled function for ${cardSet[0].card_set}`);
+                esclient.insertIntoElasticsearch(util.formatESTypeFromSetName(cardSet[0].card_set), cardSet);
+            }, throttleCurrent);
+
+            throttleCurrent += throttleIncrement;
         }
     });
 });
