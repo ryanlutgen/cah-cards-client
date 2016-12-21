@@ -1,6 +1,7 @@
 "use strict";
 
 let _ = require('lodash');
+let util = require('./utils');
 
 const HEADERS = {
     "card_type": 0,
@@ -82,7 +83,7 @@ module.exports = {
                 }
             }
 
-            cards.push(cardSet);
+            cards = util.mergeArrays(cards, cardSet);
         });
 
         return {"set": sheet.name, "cards": cards};

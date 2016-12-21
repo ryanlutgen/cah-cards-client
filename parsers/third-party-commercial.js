@@ -1,6 +1,7 @@
 "use strict";
 
 let _ = require('lodash');
+let util = require('./utils');
 
 const HEADERS = {
     "card_type": 0,
@@ -28,7 +29,7 @@ function findSetNamesAndCoords(sheet) {
         _.each(row, (item, itemIndex, itemArray) => {
             if (itemIndex !== 0 && item !== undefined) {
                 if (itemArray[itemIndex - 1] === "Set" && itemArray[itemIndex + 1] === "Special") {
-                    console.log("x: " + (rowIndex + 2) + ", y = " + (itemIndex + 1) + " name: " + item);
+                    //console.log("x: " + (rowIndex + 2) + ", y = " + (itemIndex + 1) + " name: " + item);
                     let cahSet = _.clone(coordTemplate);
                     cahSet["x"] = rowIndex;
                     cahSet["y"] = itemIndex;
@@ -68,7 +69,7 @@ module.exports = {
         let cards = [];
         let coords = findSetNamesAndCoords(sheet);
 
-        console.log(coords);
+        //console.log(coords);
 
         //similar to official packs, latch onto the set name, then find the last response row.  Iterate from
         //the set name to the last response row
@@ -92,7 +93,7 @@ module.exports = {
                 }
             }
 
-            cards.push(cardSet);
+            cards = util.mergeArrays(cards, cardSet);
         });
 
         return {"set": sheet.name, "cards": cards};

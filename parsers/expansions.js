@@ -1,6 +1,7 @@
 "use strict";
 
 let _ = require('lodash');
+let util = require('./utils');
 
 const HEADERS = {
     "card_type": 0,
@@ -77,13 +78,7 @@ module.exports = {
         _.each(sheet.data, (row) => {
 
             if (row[0] === "Set") {
-                if (cards.length === 0) {
-                    cards = checkCardSetVersions(cardSet, atLeastOneVersion)
-                }
-                else {
-                    cards.push(checkCardSetVersions(cardSet, atLeastOneVersion));
-                }
-
+                cards = util.mergeArrays(cards, checkCardSetVersions(cardSet, atLeastOneVersion));
                 expansionNum++;
                 resetValues();
                 setName = row[1];
@@ -110,7 +105,7 @@ module.exports = {
             }
         });
 
-        cards.push(checkCardSetVersions(cardSet, atLeastOneVersion));
+        cards = util.mergeArrays(cards, checkCardSetVersions(cardSet, atLeastOneVersion));
 
         return {"set": sheet.name, "cards": cards};
     }

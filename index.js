@@ -23,10 +23,28 @@ _.each(worksheet, (sheet) => {
 
 let cards = [];
 //keep cards in seperate arrays for now to debug
-cards.push(mainSet.parse(sheets[0]).cards);
-cards.push(expansions.parse(sheets[1]).cards);
-cards.push(packs.parse(sheets[2]).cards);
-cards.push(thirdPartyCommercial.parse(sheets[3]).cards);
+let mainSetCards = mainSet.parse(sheets[0]).cards;
+let expansionsCards = expansions.parse(sheets[1]).cards;
+let packsCards = packs.parse(sheets[2]).cards;
+let thirdPartyCommercialCards = thirdPartyCommercial.parse(sheets[3]).cards;
+
+cards.push(mainSetCards);
+cards.push(expansionsCards);
+cards.push(packsCards);
+cards.push(thirdPartyCommercialCards);
+
+_.each(cards, (cardSet) => {
+    console.log(cardSet.length);
+});
 
 
-fs.writeFileSync('./output/test.json', JSON.stringify(cards, null, 4));
+//mainSet.parse(sheets[0]).cards
+//expansions.parse(sheets[1]).cards
+//packs.parse(sheets[2]).cards
+//thirdPartyCommercial.parse(sheets[3]).cards
+
+
+fs.writeFileSync('./output/cah_main.json', JSON.stringify(mainSetCards, null, 4));
+fs.writeFileSync('./output/cah_expansions.json', JSON.stringify(expansionsCards, null, 4));
+fs.writeFileSync('./output/cah_packs.json', JSON.stringify(packsCards, null, 4));
+fs.writeFileSync('./output/third_party_commerical.json', JSON.stringify(thirdPartyCommercialCards, null, 4));
