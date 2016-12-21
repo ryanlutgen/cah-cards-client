@@ -9,7 +9,7 @@ module.exports = {
     stripNewlineChars: function(value) {
         return value.replace(/\n/g, "");
     },
-    formatListForElasticsearch: function(cards){
+    nestCardsBySet: function(cards){
         let masterObj = {};
 
         _.each(cards, (card) => {
@@ -21,5 +21,8 @@ module.exports = {
         });
 
         return masterObj;
+    },
+    formatESTypeFromSetName: function(setName) {
+        return setName.replace(/-/g, "").replace(/\s+/g, "-").replace(/:/g, "").toLowerCase();
     }
 };

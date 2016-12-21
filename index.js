@@ -8,6 +8,7 @@ let expansions = require('./parsers/expansions');
 let packs = require('./parsers/packs');
 let thirdPartyCommercial = require('./parsers/third-party-commercial');
 let util = require('./parsers/utils');
+let esclient = require('./esClient');
 
 const worksheet = xlsx.parse(`${__dirname}/data/cah-cards.xlsx`);
 
@@ -22,25 +23,29 @@ _.each(worksheet, (sheet) => {
     }
 });
 
-let cards = [];
+let cardsMasterList = [];
+// let cardsBySheet = [];
+
+
 //keep cards in seperate arrays for now to debug
 let mainSetCards = mainSet.parse(sheets[0]).cards;
 let expansionsCards = expansions.parse(sheets[1]).cards;
 let packsCards = packs.parse(sheets[2]).cards;
 let thirdPartyCommercialCards = thirdPartyCommercial.parse(sheets[3]).cards;
 
-cards = util.mergeArrays(cards, mainSetCards);
-cards = util.mergeArrays(cards, expansionsCards);
-cards = util.mergeArrays(cards, packsCards);
-cards = util.mergeArrays(cards, thirdPartyCommercialCards);
+cardsMasterList = util.mergeArrays(cardsMasterList, mainSetCards);
+cardsMasterList = util.mergeArrays(cardsMasterList, expansionsCards);
+cardsMasterList = util.mergeArrays(cardsMasterList, packsCards);
+cardsMasterList = util.mergeArrays(cardsMasterList, thirdPartyCommercialCards);
 
-//_.each(cards, (cardSet) => {
-//    console.log(cardSet.length);
-//});
+// cardsBySheet.push(mainSetCards);
+// cardsBySheet.push(expansionsCards);
+// cardsBySheet.push(packsCards);
+// cardsBySheet.push(thirdPartyCommercialCards);
 
-let elasticSearchData = util.formatListForElasticsearch(cards);
+let cardsNestedBySet = util.nestCardsBySet(cardsMasterList);
 
-_.each(elasticSearchData, (cardSet, setName) => {
+_.each(cardsNestedBySet, (cardSet, setName) => {
     let numOfPrompt = 0, numOfResponse = 0;
     _.each(cardSet, (card) => {
         if (card.card_type === "Prompt") {
@@ -49,19 +54,22 @@ _.each(elasticSearchData, (cardSet, setName) => {
         else {
             numOfResponse++;
         }
-    })
+    });
     console.log(`${setName} length: ${cardSet.length} | Black cards: ${numOfPrompt}, White cards: ${numOfResponse}`);
 });
 
-
-//mainSet.parse(sheets[0]).cards
-//expansions.parse(sheets[1]).cards
-//packs.parse(sheets[2]).cards
-//thirdPartyCommercial.parse(sheets[3]).cards
+esclient.initIndex(function() {
+    // esclient.insertIntoElasticsearch(util.formatESTypeFromSetName(mainSetCards[0].card_set), mainSetCards);
+    _.each(cardsNestedBySet, (cardSet) => {
+        if (cardSet.length > 0) {
+            esclient.insertIntoElasticsearch(util.formatESTypeFromSetName(cardSet[0].card_set), cardSet);
+        }
+    });
+});
 
 
 fs.writeFileSync('./output/cah_main.json', JSON.stringify(mainSetCards, null, 4));
 fs.writeFileSync('./output/cah_expansions.json', JSON.stringify(expansionsCards, null, 4));
 fs.writeFileSync('./output/cah_packs.json', JSON.stringify(packsCards, null, 4));
 fs.writeFileSync('./output/third_party_commerical.json', JSON.stringify(thirdPartyCommercialCards, null, 4));
-fs.writeFileSync('./output/es_data.json', JSON.stringify(elasticSearchData, null, 4));
+fs.writeFileSync('./output/es_data_view.json', JSON.stringify(cardsNestedBySet, null, 4));
