@@ -78,7 +78,8 @@ module.exports = {
                     cardSet.push(card);
                 }
 
-                if (numOfUndefinedRows === 4) {
+                //TODO change this approach to what was done for third party commercial
+                if (numOfUndefinedRows === 5) {
                     break;
                 }
             }

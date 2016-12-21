@@ -33,7 +33,7 @@ function findSetNamesAndCoords(sheet) {
                     let cahSet = _.clone(coordTemplate);
                     cahSet["x"] = rowIndex;
                     cahSet["y"] = itemIndex;
-                    cahSet["name"] = item;
+                    cahSet["name"] = util.stripNewlineChars(item);
                     coords.push(cahSet);
                 }
             }

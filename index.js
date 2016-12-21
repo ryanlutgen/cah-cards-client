@@ -7,6 +7,7 @@ let mainSet = require('./parsers/main-set');
 let expansions = require('./parsers/expansions');
 let packs = require('./parsers/packs');
 let thirdPartyCommercial = require('./parsers/third-party-commercial');
+let util = require('./parsers/utils');
 
 const worksheet = xlsx.parse(`${__dirname}/data/cah-cards.xlsx`);
 
@@ -28,13 +29,28 @@ let expansionsCards = expansions.parse(sheets[1]).cards;
 let packsCards = packs.parse(sheets[2]).cards;
 let thirdPartyCommercialCards = thirdPartyCommercial.parse(sheets[3]).cards;
 
-cards.push(mainSetCards);
-cards.push(expansionsCards);
-cards.push(packsCards);
-cards.push(thirdPartyCommercialCards);
+cards = util.mergeArrays(cards, mainSetCards);
+cards = util.mergeArrays(cards, expansionsCards);
+cards = util.mergeArrays(cards, packsCards);
+cards = util.mergeArrays(cards, thirdPartyCommercialCards);
 
-_.each(cards, (cardSet) => {
-    console.log(cardSet.length);
+//_.each(cards, (cardSet) => {
+//    console.log(cardSet.length);
+//});
+
+let elasticSearchData = util.formatListForElasticsearch(cards);
+
+_.each(elasticSearchData, (cardSet, setName) => {
+    let numOfPrompt = 0, numOfResponse = 0;
+    _.each(cardSet, (card) => {
+        if (card.card_type === "Prompt") {
+            numOfPrompt++;
+        }
+        else {
+            numOfResponse++;
+        }
+    })
+    console.log(`${setName} length: ${cardSet.length} | Black cards: ${numOfPrompt}, White cards: ${numOfResponse}`);
 });
 
 
@@ -48,3 +64,4 @@ fs.writeFileSync('./output/cah_main.json', JSON.stringify(mainSetCards, null, 4)
 fs.writeFileSync('./output/cah_expansions.json', JSON.stringify(expansionsCards, null, 4));
 fs.writeFileSync('./output/cah_packs.json', JSON.stringify(packsCards, null, 4));
 fs.writeFileSync('./output/third_party_commerical.json', JSON.stringify(thirdPartyCommercialCards, null, 4));
+fs.writeFileSync('./output/es_data.json', JSON.stringify(elasticSearchData, null, 4));
