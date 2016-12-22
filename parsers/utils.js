@@ -23,6 +23,6 @@ module.exports = {
         return masterObj;
     },
     formatESTypeFromSetName: function(setName) {
-        return setName.replace(/-/g, "").replace(/\s+/g, "-").replace(/:/g, "").toLowerCase();
+        return setName.replace(/-/g, "").replace(/,/g, "").replace(/\s+/g, "-").replace(/:/g, "").toLowerCase();
     }
 };
