@@ -10,19 +10,6 @@ const INDEX_NAME = 'cards-against-humanity-cards';
 
 function prepareBulkBody(type, cards) {
     let body = [];
-    // [
-    //     // action description
-    //     { index:  { _index: 'myindex', _type: 'mytype', _id: 1 } },
-    //     // the document to index
-    //     { title: 'foo' },
-    //     // action description
-    //     { update: { _index: 'myindex', _type: 'mytype', _id: 2 } },
-    //     // the document to update
-    //     { doc: { title: 'foo' } },
-    //     // action description
-    //     { delete: { _index: 'myindex', _type: 'mytype', _id: 3 } },
-    //     // no document needed for this delete
-    // ]
 
     _.each(cards, (card) => {
         body.push({ index:  { _index: INDEX_NAME, _type: type } });
@@ -54,3 +41,16 @@ module.exports = {
         });
     }
 };
+
+/*
+    example query:
+     {
+         "query": {
+             "multi_match" : {
+                 "query" : "gary",
+                 "fields" : "card_name",
+                 "fuzziness" : "0"
+             }
+         }
+     }
+ */
