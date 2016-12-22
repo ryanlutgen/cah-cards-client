@@ -9,6 +9,8 @@ let packs = require('./parsers/packs');
 let thirdPartyCommercial = require('./parsers/third-party-commercial');
 let util = require('./parsers/utils');
 let esclient = require('./esClient');
+var argv = require('minimist')(process.argv.slice(2));
+
 
 const worksheet = xlsx.parse(`${__dirname}/data/cah-cards.xlsx`);
 
@@ -67,6 +69,16 @@ esclient.initIndex(function() {
     });
 });
 
+if (argv.insertToElasticsearch === 'true') {
+    esclient.initIndex(function() {
+        // esclient.insertIntoElasticsearch(util.formatESTypeFromSetName(mainSetCards[0].card_set), mainSetCards);
+        _.each(cardsNestedBySet, (cardSet) => {
+            if (cardSet.length > 0) {
+                esclient.insertIntoElasticsearch(util.formatESTypeFromSetName(cardSet[0].card_set), cardSet);
+            }
+        });
+    });
+}
 
 fs.writeFileSync('./output/cah_main.json', JSON.stringify(mainSetCards, null, 4));
 fs.writeFileSync('./output/cah_expansions.json', JSON.stringify(expansionsCards, null, 4));
