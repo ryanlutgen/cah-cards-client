@@ -60,14 +60,18 @@ _.each(cardsNestedBySet, (cardSet, setName) => {
     console.log(`${setName} length: ${cardSet.length} | Black cards: ${numOfPrompt}, White cards: ${numOfResponse}`);
 });
 
-esclient.initIndex(function() {
-    // esclient.insertIntoElasticsearch(util.formatESTypeFromSetName(mainSetCards[0].card_set), mainSetCards);
-    _.each(cardsNestedBySet, (cardSet) => {
-        if (cardSet.length > 0) {
-            esclient.insertIntoElasticsearch(util.formatESTypeFromSetName(cardSet[0].card_set), cardSet);
+let masterListSortedByText = _.sortBy(cardsMasterList, [(card) => { return card.card_name; }]);
+let duplicates = [];
+_.each(masterListSortedByText, (card) => {
+    _.each(masterListSortedByText, (card2) => {
+        if (card.card_name === card2.card_name && card.card_set !== card2.card_set) {
+            duplicates.push(card);
+            duplicates.push(card2);
         }
     });
 });
+
+duplicates = _.uniq(duplicates);
 
 if (argv.insertToElasticsearch === 'true') {
     esclient.initIndex(function() {
@@ -85,3 +89,4 @@ fs.writeFileSync('./output/cah_expansions.json', JSON.stringify(expansionsCards,
 fs.writeFileSync('./output/cah_packs.json', JSON.stringify(packsCards, null, 4));
 fs.writeFileSync('./output/third_party_commerical.json', JSON.stringify(thirdPartyCommercialCards, null, 4));
 fs.writeFileSync('./output/es_data_view.json', JSON.stringify(cardsNestedBySet, null, 4));
+fs.writeFileSync('./output/duplicate_cards.json', JSON.stringify(duplicates, null, 4));
