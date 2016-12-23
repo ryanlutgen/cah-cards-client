@@ -1,9 +1,10 @@
 let elasticsearch = require('elasticsearch');
 let _ = require('lodash');
+let config = require('./config.json');
 
 let client = new elasticsearch.Client({
-    host: 'localhost:9200',
-    log: 'error'
+    host: config.esHost,
+    log: 'info'
 });
 
 const INDEX_NAME = 'cards-against-humanity-cards';
@@ -34,9 +35,19 @@ module.exports = {
     },
     insertIntoElasticsearch: function(type, cards) {
         let bulkBody = prepareBulkBody(type, cards);
+        //console.log(bulkBody);
         client.bulk({
             body: bulkBody
         }, function (err, resp) {
+            if (err) {
+            }
+            if (resp) {
+                if (resp.errors) {
+                    _.each(resp.items, (item) => {
+                        console.log(item);
+                    });
+                }
+            }
             console.log(`done bulk indexing ${type}`);
         });
     }
