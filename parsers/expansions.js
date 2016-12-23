@@ -21,13 +21,13 @@ const CARD_TEMPLATE = {
     "card_name": "",
     "card_special": "",
     "card_set": "",
-    "card_in_1.0": false,
-    "card_in_1.1": false,
-    "card_in_1.2": false,
-    "card_in_1.3": false,
-    "card_in_1.4": false,
-    "card_in_1.5": false,
-    "card_in_1.6": false
+    "card_in_1_0": false,
+    "card_in_1_1": false,
+    "card_in_1_2": false,
+    "card_in_1_3": false,
+    "card_in_1_4": false,
+    "card_in_1_5": false,
+    "card_in_1_6": false
 };
 
 /**
@@ -50,7 +50,7 @@ function checkCardSetVersions(cardSet, atLeastOneVersion) {
     _.each(cardSet, (card, index) => {
         _.each(atLeastOneVersion, (version, indexVersion) => {
             if (!version) {
-                delete card["card_in_1." + indexVersion];
+                delete card["card_in_1_" + indexVersion];
             }
         });
     });
@@ -91,13 +91,13 @@ module.exports = {
                 card.card_name = row[HEADERS.card_name];
                 card.card_special = row[HEADERS.special];
                 card.card_set = setName;
-                card["card_in_1.0"] = row[HEADERS["1.0"]] !== undefined;
-                card["card_in_1.1"] = row[HEADERS["1.1"]] !== undefined;
-                card["card_in_1.2"] = row[HEADERS["1.2"]] !== undefined;
-                card["card_in_1.3"] = row[HEADERS["1.3"]] !== undefined;
-                card["card_in_1.4"] = row[HEADERS["1.4"]] !== undefined;
-                card["card_in_1.5"] = row[HEADERS["1.5"]] !== undefined;
-                card["card_in_1.6"] = row[HEADERS["1.6"]] !== undefined;
+                card["card_in_1_0"] = row[HEADERS["1.0"]] !== undefined;
+                card["card_in_1_1"] = row[HEADERS["1.1"]] !== undefined;
+                card["card_in_1_2"] = row[HEADERS["1.2"]] !== undefined;
+                card["card_in_1_3"] = row[HEADERS["1.3"]] !== undefined;
+                card["card_in_1_4"] = row[HEADERS["1.4"]] !== undefined;
+                card["card_in_1_5"] = row[HEADERS["1.5"]] !== undefined;
+                card["card_in_1_6"] = row[HEADERS["1.6"]] !== undefined;
 
                 cardSet.push(card);
 

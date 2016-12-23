@@ -57,7 +57,7 @@ _.each(cardsNestedBySet, (cardSet, setName) => {
             numOfResponse++;
         }
     });
-    console.log(`${setName} length: ${cardSet.length} | Black cards: ${numOfPrompt}, White cards: ${numOfResponse}`);
+    //console.log(`${setName} length: ${cardSet.length} | Black cards: ${numOfPrompt}, White cards: ${numOfResponse}`);
 });
 
 let masterListSortedByText = _.sortBy(cardsMasterList, [(card) => { return card.card_name; }]);
@@ -73,14 +73,18 @@ _.each(masterListSortedByText, (card) => {
 
 duplicates = _.uniq(duplicates);
 
+console.log(argv);
 if (argv.insertToElasticsearch === 'true') {
+    console.log("here");
     esclient.initIndex(function() {
-        // esclient.insertIntoElasticsearch(util.formatESTypeFromSetName(mainSetCards[0].card_set), mainSetCards);
-        _.each(cardsNestedBySet, (cardSet) => {
-            if (cardSet.length > 0) {
-                esclient.insertIntoElasticsearch(util.formatESTypeFromSetName(cardSet[0].card_set), cardSet);
-            }
-        });
+        setTimeout(function() {
+            // esclient.insertIntoElasticsearch(util.formatESTypeFromSetName(mainSetCards[0].card_set), mainSetCards);
+            _.each(cardsNestedBySet, (cardSet) => {
+                if (cardSet.length > 0) {
+                    esclient.insertIntoElasticsearch(util.formatESTypeFromSetName(cardSet[0].card_set), cardSet);
+                }
+            });
+        }, 1000);
     });
 }
 
