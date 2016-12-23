@@ -60,6 +60,7 @@ _.each(cardsNestedBySet, (cardSet, setName) => {
     //console.log(`${setName} length: ${cardSet.length} | Black cards: ${numOfPrompt}, White cards: ${numOfResponse}`);
 });
 
+console.log(cardsMasterList.length);
 let masterListSortedByText = _.sortBy(cardsMasterList, [(card) => { return card.card_name; }]);
 let duplicates = [];
 _.each(masterListSortedByText, (card) => {
@@ -75,14 +76,18 @@ duplicates = _.uniq(duplicates);
 
 console.log(argv);
 if (argv.insertToElasticsearch === 'true') {
-    console.log("here");
     esclient.initIndex(function() {
         setTimeout(function() {
+            let currentTime = 0;
+            let increment = 1000;
             // esclient.insertIntoElasticsearch(util.formatESTypeFromSetName(mainSetCards[0].card_set), mainSetCards);
             _.each(cardsNestedBySet, (cardSet) => {
-                if (cardSet.length > 0) {
-                    esclient.insertIntoElasticsearch(util.formatESTypeFromSetName(cardSet[0].card_set), cardSet);
-                }
+                setTimeout(function() {
+                    if (cardSet.length > 0) {
+                        esclient.insertIntoElasticsearch(util.formatESTypeFromSetName(cardSet[0].card_set), cardSet);
+                    }
+                }, currentTime);
+                currentTime += increment;
             });
         }, 1000);
     });
