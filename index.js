@@ -3,10 +3,14 @@
 let fs = require('fs');
 let xlsx = require('node-xlsx');
 let _ = require('lodash');
+let mkdirp = require('mkdirp');
+let path = require('path');
+
 let mainSet = require('./parsers/main-set');
 let expansions = require('./parsers/expansions');
 let packs = require('./parsers/packs');
 let thirdPartyCommercial = require('./parsers/third-party-commercial');
+
 let util = require('./parsers/utils');
 let esclient = require('./esClient');
 var argv = require('minimist')(process.argv.slice(2));
@@ -46,6 +50,9 @@ cardsMasterList = util.mergeArrays(cardsMasterList, thirdPartyCommercialCards);
 // cardsBySheet.push(thirdPartyCommercialCards);
 
 let cardsNestedBySet = util.nestCardsBySet(cardsMasterList);
+
+mkdirp.sync(path.resolve('./output'));
+mkdirp.sync(path.resolve('./output/sets'));
 
 _.each(cardsNestedBySet, (cardSet, setName) => {
     let numOfPrompt = 0, numOfResponse = 0;
