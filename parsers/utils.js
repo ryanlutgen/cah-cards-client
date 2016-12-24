@@ -24,5 +24,15 @@ module.exports = {
     },
     formatESTypeFromSetName: function(setName) {
         return setName.replace(/-/g, "").replace(/,/g, "").replace(/\s+/g, "-").replace(/:/g, "").toLowerCase();
+    },
+    validateSetLengths: function(cardsNestedBySet) {
+        let setsLengthObj = require('./../set-lengths.json');
+        _.each(cardsNestedBySet, (cardSet, setName) => {
+            let setSpecLength = setsLengthObj[setName];
+            if (setSpecLength !== undefined && cardSet.length !== setSpecLength) {
+                console.error(`${setName} length does not match specification!`);
+                throw 'Error!';
+            }
+        })
     }
 };

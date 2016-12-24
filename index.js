@@ -76,6 +76,8 @@ _.each(cardsNestedBySet, (cardSet, setName) => {
     fs.writeFileSync(`./output/sets/${setName.replace(/:/g, "").replace(/\//g, "")}.json`, JSON.stringify(cardInfo, null, 4));
 });
 
+util.validateSetLengths(cardsNestedBySet);
+
 console.log(cardsMasterList.length);
 let masterListSortedByText = _.sortBy(cardsMasterList, [(card) => { return card.card_name; }]);
 let duplicates = [];
