@@ -38,11 +38,15 @@ let mainSetCards = mainSet.parse(sheets[0]).cards;
 let expansionsCards = expansions.parse(sheets[1]).cards;
 let packsCards = packs.parse(sheets[2]).cards;
 let thirdPartyCommercialCards = thirdPartyCommercial.parse(sheets[3]).cards;
+let standaloneGamesCards = thirdPartyCommercial.parse(sheets[4]).cards;
+let printOnDemandCards = thirdPartyCommercial.parse(sheets[5]).cards;
 
 cardsMasterList = util.mergeArrays(cardsMasterList, mainSetCards);
 cardsMasterList = util.mergeArrays(cardsMasterList, expansionsCards);
 cardsMasterList = util.mergeArrays(cardsMasterList, packsCards);
 cardsMasterList = util.mergeArrays(cardsMasterList, thirdPartyCommercialCards);
+cardsMasterList = util.mergeArrays(cardsMasterList, standaloneGamesCards);
+cardsMasterList = util.mergeArrays(cardsMasterList, printOnDemandCards);
 
 // cardsBySheet.push(mainSetCards);
 // cardsBySheet.push(expansionsCards);
