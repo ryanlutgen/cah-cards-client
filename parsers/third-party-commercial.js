@@ -43,7 +43,7 @@ function findSetNamesAndCoords(sheet) {
     return coords;
 }
 
-function findLastCardSetX(coord, sheet) {
+function findLastCardSetX(coord, sheet, name) {
     let y = coord.y - 1;
 
     let firstResponseX = 0;
@@ -51,13 +51,29 @@ function findLastCardSetX(coord, sheet) {
     for (let i = coord.x; i < sheet.data.length; i++) {
         let row = sheet.data[i];
 
-        if (row[0] === 'Response' && firstResponseX === 0) {
+        if (row[y] === 'Response' && firstResponseX === 0) {
             firstResponseX = i;
         }
 
-        if (row[0] === undefined && firstResponseX !== 0) {
+        if (row[y] === undefined && firstResponseX !== 0) {
             lastResponseX = i - 1;
             break;
+        }
+    }
+
+    if (lastResponseX === 0) {
+        console.log(`Set ${name} is not registering any response cards, assuming it is all prompts`);
+        for (let i = coord.x; i < sheet.data.length; i++) {
+            let row = sheet.data[i];
+
+            if (row[y] === 'Prompt' && firstResponseX === 0) {
+                firstResponseX = i;
+            }
+
+            if (row[y] === undefined && firstResponseX !== 0) {
+                lastResponseX = i - 1;
+                break;
+            }
         }
     }
 
@@ -69,15 +85,13 @@ module.exports = {
         let cards = [];
         let coords = findSetNamesAndCoords(sheet);
 
-        //console.log(coords);
-
         //similar to official packs, latch onto the set name, then find the last response row.  Iterate from
         //the set name to the last response row
         _.each(coords, (coord) => {
             let x = coord["x"], y = coord["y"], name = coord["name"];
             let cardTypeCoordY =  y - 1;
             let cardSet = [];
-            let lastResponseCoord = findLastCardSetX(coord, sheet);
+            let lastResponseCoord = findLastCardSetX(coord, sheet, name);
 
             for (let i = x; i <= lastResponseCoord.x; i++) {
                 let row = sheet.data[i];
