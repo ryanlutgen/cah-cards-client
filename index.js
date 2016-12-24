@@ -68,7 +68,12 @@ _.each(cardsNestedBySet, (cardSet, setName) => {
             numOfResponse++;
         }
     });
-    //console.log(`${setName} length: ${cardSet.length} | Black cards: ${numOfPrompt}, White cards: ${numOfResponse}`);
+    console.log(`${setName} length: ${cardSet.length} | Black cards: ${numOfPrompt}, White cards: ${numOfResponse}`);
+
+    let cardInfo = [];
+    cardInfo.push({name: setName, length: cardSet.length, prompts: numOfPrompt, responses: numOfResponse});
+    cardInfo.push(cardSet);
+    fs.writeFileSync(`./output/sets/${setName.replace(/:/g, "").replace(/\//g, "")}.json`, JSON.stringify(cardInfo, null, 4));
 });
 
 console.log(cardsMasterList.length);
