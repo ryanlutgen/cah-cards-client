@@ -19,7 +19,7 @@ var argv = require('minimist')(process.argv.slice(2));
 const worksheet = xlsx.parse(`${__dirname}/data/cah-cards.xlsx`);
 
 var sheetsToScan = ["CAH Main Deck", "CAH Expansions", "CAH Packs", "Third Party Commercial", "Kickstarter", "Stand Alone Games", "Print On Demand",
-    "Special Purpose", "Fan Expansions", "Misc. Unofficial Decks - Black", "Misc. Unofficial Decks - White", "Custom - White", "Custom - Black", "More Custom Cards"];
+    "Special Purpose", "Fan Expansions", "Custom - White", "Custom - Black", "More Custom Cards"];
 
 let sheets = [];
 _.each(worksheet, (sheet) => {
@@ -33,20 +33,15 @@ let cardsMasterList = [];
 // let cardsBySheet = [];
 
 
-//keep cards in seperate arrays for now to debug
-let mainSetCards = mainSet.parse(sheets[0]).cards;
-let expansionsCards = expansions.parse(sheets[1]).cards;
-let packsCards = packs.parse(sheets[2]).cards;
-let thirdPartyCommercialCards = thirdPartyCommercial.parse(sheets[3]).cards;
-let standaloneGamesCards = thirdPartyCommercial.parse(sheets[4]).cards;
-let printOnDemandCards = thirdPartyCommercial.parse(sheets[5]).cards;
-
-cardsMasterList = util.mergeArrays(cardsMasterList, mainSetCards);
-cardsMasterList = util.mergeArrays(cardsMasterList, expansionsCards);
-cardsMasterList = util.mergeArrays(cardsMasterList, packsCards);
-cardsMasterList = util.mergeArrays(cardsMasterList, thirdPartyCommercialCards);
-cardsMasterList = util.mergeArrays(cardsMasterList, standaloneGamesCards);
-cardsMasterList = util.mergeArrays(cardsMasterList, printOnDemandCards);
+cardsMasterList = util.mergeArrays(cardsMasterList, mainSet.parse(sheets[0]).cards);                    //main set
+cardsMasterList = util.mergeArrays(cardsMasterList, expansions.parse(sheets[1]).cards);                 //official xpacks
+cardsMasterList = util.mergeArrays(cardsMasterList, packs.parse(sheets[2]).cards);                      //official packs
+cardsMasterList = util.mergeArrays(cardsMasterList, thirdPartyCommercial.parse(sheets[3]).cards);       //third party commercial
+cardsMasterList = util.mergeArrays(cardsMasterList, thirdPartyCommercial.parse(sheets[4]).cards);       //kickstarter
+cardsMasterList = util.mergeArrays(cardsMasterList, thirdPartyCommercial.parse(sheets[5]).cards);       //stand alone games
+cardsMasterList = util.mergeArrays(cardsMasterList, thirdPartyCommercial.parse(sheets[6]).cards);       //print on demand
+cardsMasterList = util.mergeArrays(cardsMasterList, thirdPartyCommercial.parse(sheets[7]).cards);       //special purpose
+cardsMasterList = util.mergeArrays(cardsMasterList, thirdPartyCommercial.parse(sheets[7]).cards);       //fan expansions
 
 // cardsBySheet.push(mainSetCards);
 // cardsBySheet.push(expansionsCards);
@@ -78,7 +73,7 @@ _.each(cardsNestedBySet, (cardSet, setName) => {
 
 util.validateSetLengths(cardsNestedBySet);
 
-console.log(cardsMasterList.length);
+console.log(`total cards: ${cardsMasterList.length}`);
 let masterListSortedByText = _.sortBy(cardsMasterList, [(card) => { return card.card_name; }]);
 let duplicates = [];
 _.each(masterListSortedByText, (card) => {
@@ -92,7 +87,7 @@ _.each(masterListSortedByText, (card) => {
 
 duplicates = _.uniq(duplicates);
 
-console.log(argv);
+//console.log(argv);
 if (argv.insertToElasticsearch === 'true') {
     esclient.initIndex(function() {
         setTimeout(function() {
@@ -110,10 +105,5 @@ if (argv.insertToElasticsearch === 'true') {
         }, 1000);
     });
 }
-
-fs.writeFileSync('./output/cah_main.json', JSON.stringify(mainSetCards, null, 4));
-fs.writeFileSync('./output/cah_expansions.json', JSON.stringify(expansionsCards, null, 4));
-fs.writeFileSync('./output/cah_packs.json', JSON.stringify(packsCards, null, 4));
-fs.writeFileSync('./output/third_party_commerical.json', JSON.stringify(thirdPartyCommercialCards, null, 4));
 fs.writeFileSync('./output/es_data_view.json', JSON.stringify(cardsNestedBySet, null, 4));
 fs.writeFileSync('./output/duplicate_cards.json', JSON.stringify(duplicates, null, 4));

@@ -33,7 +33,7 @@ function findSetNamesAndCoords(sheet) {
                     let cahSet = _.clone(coordTemplate);
                     cahSet["x"] = rowIndex;
                     cahSet["y"] = itemIndex;
-                    cahSet["name"] = util.stripNewlineChars(item);
+                    cahSet["name"] = util.formatSetName(util.stripNewlineChars(item));
                     coords.push(cahSet);
                 }
             }
@@ -48,8 +48,14 @@ function findLastCardSetX(coord, sheet, name) {
 
     let firstResponseX = 0;
     let lastResponseX = 0;
-    for (let i = coord.x; i < sheet.data.length; i++) {
+    for (let i = coord.x + 1; i < sheet.data.length; i++) {
         let row = sheet.data[i];
+
+        //if there are no cards listed for this set, and we got to the one below it.
+        if (row[y] === 'Set') {
+            console.log(`${name}: No cards listed for set, iteration has reached the next set listed vertically, aborting`);
+            break;
+        }
 
         if (row[y] === 'Response' && firstResponseX === 0) {
             firstResponseX = i;
@@ -59,12 +65,22 @@ function findLastCardSetX(coord, sheet, name) {
             lastResponseX = i - 1;
             break;
         }
+
+        if (i === sheet.data.length - 1) {
+            console.log(`${name}: Reached the end of scanning response cards, nothing found`);
+        }
     }
 
     if (lastResponseX === 0) {
-        console.log(`Set ${name} is not registering any response cards, assuming it is all prompts`);
-        for (let i = coord.x; i < sheet.data.length; i++) {
+        console.log(`${name}: Set is not registering any response cards, assuming it is all prompts`);
+        for (let i = coord.x + 1; i < sheet.data.length; i++) {
             let row = sheet.data[i];
+
+            //if there are no cards listed for this set, and we got to the one below it.
+            if (row[y] === 'Set') {
+                console.log(`${name}: No cards listed for set, iteration has reached the next set listed vertically, aborting`);
+                break;
+            }
 
             if (row[y] === 'Prompt' && firstResponseX === 0) {
                 firstResponseX = i;
@@ -73,6 +89,10 @@ function findLastCardSetX(coord, sheet, name) {
             if (row[y] === undefined && firstResponseX !== 0) {
                 lastResponseX = i - 1;
                 break;
+            }
+
+            if (i === sheet.data.length - 1) {
+                console.log(`${name}: Reached the end of scanning prompt cards, nothing found`);
             }
         }
     }

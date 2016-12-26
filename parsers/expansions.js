@@ -81,7 +81,7 @@ module.exports = {
                 cards = util.mergeArrays(cards, checkCardSetVersions(cardSet, atLeastOneVersion));
                 expansionNum++;
                 resetValues();
-                setName = row[1];
+                setName = util.formatSetName(row[1]);
             }
 
             if (row[0] === "Prompt" || row[0] === "Response") {

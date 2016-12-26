@@ -34,5 +34,13 @@ module.exports = {
                 throw 'Error!';
             }
         })
+    },
+    //Some sets in the spreadsheet have a space before their name.  Instead of having to edit the sheet on every update, just filter through this
+    formatSetName: function(setName) {
+        if (setName[0] === ' ') {
+            setName = setName.substr(1, setName.length);
+        }
+
+        return setName
     }
 };
