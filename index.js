@@ -29,6 +29,7 @@ log4js.configure({
     ]
 });
 let logger = log4js.getLogger('logs');
+//error, warn, info, debug
 logger.setLevel(argv.logLevel.toUpperCase() || 'DEBUG');
 
 const worksheet = xlsx.parse(`${__dirname}/data/cah-cards.xlsx`);
@@ -68,7 +69,7 @@ masterList = util.mergeArrays(masterList, thirdPartyCommercial.parse(sheets[8]))
 
 logSetLengths();
 function logSetLengths() {
-    logger.debug("Logging set lengths...");
+    logger.info("Logging set lengths...");
     let cardsNestedBySet = util.nestCardsBySet(masterList);
 
     _.each(masterList, (sheet) => {
@@ -98,7 +99,7 @@ function logSetLengths() {
                 numOfResponse++;
             }
         });
-        logger.info(`${setName} length: ${cardSet.length} | Black cards: ${numOfPrompt}, White cards: ${numOfResponse}`);
+        logger.debug(`${setName} length: ${cardSet.length} | Black cards: ${numOfPrompt}, White cards: ${numOfResponse}`);
 
         let cardInfo = [];
         cardInfo.push({name: setName, length: cardSet.length, prompts: numOfPrompt, responses: numOfResponse});
@@ -113,7 +114,7 @@ function logSetLengths() {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // DETECT DUPLICATES
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-logger.debug("Detecting duplicates...");
+logger.info("Detecting duplicates...");
 detectDuplicates();
 function detectDuplicates() {
     let duplicates = [];
@@ -215,4 +216,6 @@ function insertIntoElasticsearch() {
     }
 }
 
-util.deleteFolderRecursive(path.resolve('./temp'));
+logger.info(`Scanned a total of ${util.getCardsFromMasterList(masterList).length} cards`);
+
+//util.deleteFolderRecursive(path.resolve('./temp'));

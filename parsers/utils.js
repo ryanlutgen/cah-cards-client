@@ -10,16 +10,17 @@ module.exports = {
     stripNewlineChars: function(value) {
         return value.replace(/\n/g, "");
     },
+    getCardsFromMasterList: function(cardSheets) {
+        let masterArray = [];
+
+        _.each(cardSheets, (cardSheet) => {
+            masterArray = this.mergeArrays(masterArray, cardSheet.cards);
+        });
+
+        return masterArray;
+    },
     nestCardsBySet: function(cardSheets){
         let masterObj = {};
-
-        //_.each(cards, (card) => {
-        //    if (masterObj[card.card_set] === undefined) {
-        //        masterObj[card.card_set] = [];
-        //    }
-        //
-        //    masterObj[card.card_set].push(card);
-        //});
 
         _.each(cardSheets, (cardSheet) => {
             _.each(cardSheet.cards, (card) => {
