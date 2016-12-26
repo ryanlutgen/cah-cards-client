@@ -44,11 +44,11 @@ module.exports = {
             if (resp) {
                 if (resp.errors) {
                     _.each(resp.items, (item) => {
-                        console.log(item);
+                        logger.debug(item);
                     });
                 }
             }
-            console.log(`done bulk indexing ${type}`);
+            logger.debug(`done bulk indexing ${type}`);
         });
     }
 };

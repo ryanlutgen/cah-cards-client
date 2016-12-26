@@ -4,7 +4,7 @@ let _ = require('lodash');
 
 const HEADERS = {
     "card_type": 0,
-    "card_name": 1,
+    "card_text": 1,
     "special": 2,
     "1.0": 3,
     "1.1": 4,
@@ -18,7 +18,7 @@ const HEADERS = {
 
 const CARD_TEMPLATE = {
     "card_type": "",
-    "card_name": "",
+    "card_text": "",
     "card_special": "",
     "card_set": "",
     "card_in_1.0": false,
@@ -44,7 +44,7 @@ module.exports = {
                 let card = _.clone(CARD_TEMPLATE);
 
                 card.card_type = row[HEADERS.card_type];
-                card.card_name = row[HEADERS.card_name];
+                card.card_text = row[HEADERS.card_text];
                 card.card_special = row[HEADERS.special];
                 card.card_set = setName;
                 card["card_in_1.0"] = row[HEADERS["1.0"]] !== undefined;

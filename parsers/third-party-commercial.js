@@ -2,16 +2,18 @@
 
 let _ = require('lodash');
 let util = require('./utils');
+let log4js = require('log4js');
+let logger = log4js.getLogger('logs');
 
 const HEADERS = {
     "card_type": 0,
-    "card_name": 1,
+    "card_text": 1,
     "special": 2
 };
 
 const CARD_TEMPLATE = {
     "card_type": "",
-    "card_name": "",
+    "card_text": "",
     "card_special": "",
     "card_set": ""
 };
@@ -53,7 +55,7 @@ function findLastCardSetX(coord, sheet, name) {
 
         //if there are no cards listed for this set, and we got to the one below it.
         if (row[y] === 'Set') {
-            console.log(`${name}: No cards listed for set, iteration has reached the next set listed vertically, aborting`);
+            logger.warn(`${name}: No cards listed for set, iteration has reached the next set listed vertically, aborting`);
             break;
         }
 
@@ -67,12 +69,12 @@ function findLastCardSetX(coord, sheet, name) {
         }
 
         if (i === sheet.data.length - 1) {
-            console.log(`${name}: Reached the end of scanning response cards, nothing found`);
+            logger.warn(`${name}: Reached the end of scanning response cards, nothing found`);
         }
     }
 
     if (lastResponseX === 0) {
-        console.log(`${name}: Set is not registering any response cards, assuming it is all prompts`);
+        logger.warn(`${name}: Set is not registering any response cards, assuming it is all prompts`);
         for (let i = coord.x + 1; i < sheet.data.length; i++) {
             let row = sheet.data[i];
 
@@ -92,7 +94,7 @@ function findLastCardSetX(coord, sheet, name) {
             }
 
             if (i === sheet.data.length - 1) {
-                console.log(`${name}: Reached the end of scanning prompt cards, nothing found`);
+                logger.warn(`${name}: Reached the end of scanning prompt cards, nothing found`);
             }
         }
     }
@@ -120,7 +122,7 @@ module.exports = {
                 if (cardType === "Prompt" || cardType === "Response") {
                     let card = _.clone(CARD_TEMPLATE);
                     card.card_type = cardType;
-                    card.card_name = row[cardTypeCoordY + HEADERS["card_name"]];
+                    card.card_text = row[cardTypeCoordY + HEADERS["card_text"]];
                     card.card_special = row[cardTypeCoordY + HEADERS["card_special"]];
                     card.card_set = coord["name"];
                     cardSet.push(card);
